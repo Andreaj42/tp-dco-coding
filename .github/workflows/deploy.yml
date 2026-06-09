@@ -23,7 +23,7 @@ jobs:
           python-version: "3.11"
       - run: |
           pip install jupyterlite-core jupyterlab jupyterlite-pyodide-kernel
-          jupyter lite build --contents content --output-dir _output
+          jupyter lite build --contents content --output-dir _output --base-url /tp-dco-coding/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _output
