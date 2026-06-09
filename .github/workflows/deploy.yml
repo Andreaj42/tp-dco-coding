@@ -1,39 +1,37 @@
-name: deploy
+name: Deploy JupyterLite
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
-
-      - run: pip install jupyterlite-core jupyterlab
-
-      - run: jupyter lite build
-
+        with:
+          python-version: "3.11"
+      - run: |
+          pip install jupyterlite-core jupyterlab jupyterlite-pyodide-kernel
+          jupyter lite build --contents content --output-dir _output
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: ./_output
+          path: _output
 
   deploy:
-    needs: build
-
-    permissions:
-      pages: write
-      id-token: write
-
-    runs-on: ubuntu-latest
-
     environment:
       name: github-pages
-
+    runs-on: ubuntu-latest
+    needs: build
     steps:
       - uses: actions/deploy-pages@v4
