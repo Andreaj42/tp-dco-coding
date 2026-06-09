@@ -1,0 +1,39 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+
+      - run: pip install jupyterlite-core jupyterlab
+
+      - run: jupyter lite build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_output
+
+  deploy:
+    needs: build
+
+    permissions:
+      pages: write
+      id-token: write
+
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+
+    steps:
+      - uses: actions/deploy-pages@v4
